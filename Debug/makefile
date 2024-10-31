@@ -52,6 +52,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 blink_led_ota_v1.list \
 
+OBJCOPY_HEX += \
+blink_led_ota_v1.hex \
+
+OBJCOPY_BIN += \
+blink_led_ota_v1.bin \
+
 
 # All Target
 all: main-build
@@ -75,12 +81,22 @@ blink_led_ota_v1.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS
 	@echo 'Finished building: $@'
 	@echo ' '
 
+blink_led_ota_v1.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "blink_led_ota_v1.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+blink_led_ota_v1.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "blink_led_ota_v1.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) blink_led_ota_v1.elf blink_led_ota_v1.list blink_led_ota_v1.map default.size.stdout
+	-$(RM) blink_led_ota_v1.bin blink_led_ota_v1.elf blink_led_ota_v1.hex blink_led_ota_v1.list blink_led_ota_v1.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
